@@ -1,0 +1,37 @@
+#!/bin/bash
+
+pomodoroLen=$1
+breakLen=$2
+
+if [[ -z $pomodoroLen ]] || [[ -z $breakLen ]]
+then
+  echo "Usage:"
+  echo "$0 INTERVAL_MINUTES BREAK_MINUTES"
+  exit 1
+fi
+
+seconds=60
+i=1
+while [[ true ]]
+do
+  echo -n "Hit 'enter' to start pomodoro number $i..."
+  read
+  echo "Pomodoro $i started."
+  sleep $(($pomodoroLen * $seconds))
+  notify-send -u critical "Break time!"
+
+  breakMins=$breakLen
+  if [[ $i -ge 4 ]]
+  then
+    echo "Fourth pomodoro! Longer break! Resetting."
+    i=0
+    breakMins=6
+  fi
+
+  echo -n "You have $breakMins minutes of break time. Hit 'enter' to start..."
+  read
+  echo "Break started."
+  sleep $(($breakMins * $seconds))
+  notify-send -u critical "End of break!"
+  i=$((i + 1))
+done
